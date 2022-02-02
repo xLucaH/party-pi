@@ -1,0 +1,17 @@
+Must:
+- 1 Spiel
+- Spiel muss vom Rasp aus gestartet werden
+- der Button soll im Spiel als Input dienen
+
+Should:
+- automatisches Starten beim Einschalten des Rasp
+- 2 Spiele
+
+Could: 
+- automatischer Wechsel bei Spielen
+-> Zusammenfassung von Spielen zu einem Spiel
+
+Won't:
+- Steuerkreuz als zusätzliche Steuerungseinheit
+- Laptop als Bildschirm nutzen
+
