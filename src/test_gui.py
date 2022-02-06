@@ -1,4 +1,5 @@
 import pygame as pg
+from src.games.game_manager import GameManager
 
 pg.init()
 pg.font.init()
