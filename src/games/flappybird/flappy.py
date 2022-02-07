@@ -15,6 +15,7 @@ IMAGES, SOUNDS, HITMASKS = {}, {}, {}
 
 ROOT_DIR = os.environ.get('FLAPPY_DIR', "")
 
+print("ROOT DIR", ROOT_DIR)
 
 # list of all possible players (tuple of 3 positions of flap)
 PLAYERS_LIST = (
@@ -63,6 +64,8 @@ def main():
     FPSCLOCK = pygame.time.Clock()
     SCREEN = pygame.display.set_mode((SCREENWIDTH, SCREENHEIGHT))
     pygame.display.set_caption('Flappy Bird')
+
+    print("TEST JOINED DIR", os.path.join(ROOT_DIR, 'assets/sprites/0.png'))
 
     # numbers sprites for score display
     IMAGES['numbers'] = (
