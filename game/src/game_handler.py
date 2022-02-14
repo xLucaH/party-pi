@@ -48,7 +48,7 @@ class GameHandler:
         print("BUTTON PRESSED")
 
         for subscriber in self.button_subscriber:
-            subscriber()
+            subscriber(self.delta_time)
 
     def subscribe_to_button(self, func):
         self.button_subscriber.append(func)
