@@ -9,11 +9,12 @@ class GameManager:
 
     def __init__(self):
         self.game_handler = GameHandler()
-        self.screen = pygame.display.set_mode(settings.SCREEN_SIZE, pygame.FULLSCREEN)
+        self.screen = pygame.display.set_mode(settings.SCREEN_SIZE)
 
         self.fps = settings.FPS
         self.clock = pygame.time.Clock()
         self.delta_time = 0
+        self.last_time = pygame.time.get_ticks()
 
         self.game_running = True
 
@@ -34,6 +35,11 @@ class GameManager:
 
     def update(self):
         # First thing is to check for occurring events.
+        now_time = pygame.time.get_ticks()
+
+        delta = (now_time - self.last_time) / 1000.0
+        self.delta_time = delta
+
         self.game_handler.update(self.delta_time)
 
         events = self.game_handler.events
@@ -44,7 +50,7 @@ class GameManager:
         # Last things we want to do.
         pygame.display.update()
 
-        self.delta_time = self.clock.tick(self.fps) / 1000.0
+        self.last_time = now_time
         self.clock.tick(self.fps)
 
     def check_events(self, events):
