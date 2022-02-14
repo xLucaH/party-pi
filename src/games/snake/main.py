@@ -12,17 +12,19 @@ class Colors:
 
 
 class Config:
-    SNAKE_BLOCK = 10
-    SNAKE_SPEED = 10
+    SNAKE_BLOCK = 15
+    SNAKE_SPEED = 15
 
 
 class SnakeGame(SceneBase):
 
-    def __init__(self, screen):
+    def __init__(self, screen, handler):
         super().__init__()
 
         self.screen = screen
         self.screen_x, self.screen_y = self.screen.get_size()
+
+        self.handler = handler
 
         self.game_over = False
         self.game_close = False
@@ -56,20 +58,17 @@ class SnakeGame(SceneBase):
         self.foody = round(random.randrange(0, self.screen_y - self.snake_block) / 10.0) * 10.0
 
     def update(self, screen, delta_time, events):
-        # button/key assignment
 
-        for event in events:
-            if event.type == pygame.KEYDOWN:
+        if self.handler.is_button_pressed():
+            self.current_direction += 1
 
-                if event.key == pygame.K_SPACE:
-                    self.current_direction += 1
+            # Reset current direction to first entry.
+            if self.current_direction >= 4:
+                self.current_direction = 0
 
-                    # Reset current direction to first entry.
-                    if self.current_direction >= 4:
-                        self.current_direction = 0
-
-                    # Set x and y change to our current direction the snake is moving.
-                    self.x1_change, self.y1_change = self.directions[self.current_direction]
+            # Set x and y change to our current direction the snake is moving.
+            self.x1_change = (self.directions[self.current_direction][0] * self.snake_speed) * delta_time
+            self.y1_change = (self.directions[self.current_direction][1] * self.snake_speed) * delta_time
 
         self.screen.blit(self.bg, (0, 0))
 
@@ -103,11 +102,25 @@ class SnakeGame(SceneBase):
 
         pygame.display.update()
 
+        #print((self.x1, self.y1), (self.foodx, self.foody))
+
         # if snake ate snacks, generate a new one
-        if self.x1 == self.foodx and self.y1 == self.foody:
+        if self.check_food_collision():
             self.foodx = round(random.randrange(0, self.screen_x - self.snake_block) / 10.0) * 10.0
             self.foody = round(random.randrange(0, self.screen_y - self.snake_block) / 10.0) * 10.0
             self.length_of_snake += 1
+
+    def check_food_collision(self):
+        px, py = self.x1, self.y1
+        fx, fy = self.foodx, self.foody
+
+        is_x_collision = fx >= px - self.snake_block and fx <= px + self.snake_block
+        is_y_collision = fy >= py - self.snake_block and fy <= py + self.snake_block
+
+        if is_x_collision and is_y_collision:
+            return True
+
+        return False
 
     def your_score(self, score):
         value = self.font.render("Your Score: " + str(score), True, Colors.WHITE)

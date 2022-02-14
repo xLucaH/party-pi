@@ -2,12 +2,14 @@ import pygame
 from src import settings
 
 from src.games.snake.main import SnakeGame
+from src.game_handler import GameHandler
 
 
 class GameManager:
 
     def __init__(self):
-        self.screen = pygame.display.set_mode(settings.SCREEN_SIZE, pygame.FULLSCREEN)
+        self.game_handler = GameHandler()
+        self.screen = pygame.display.set_mode(settings.SCREEN_SIZE)
 
         self.fps = settings.FPS
         self.clock = pygame.time.Clock()
@@ -23,7 +25,7 @@ class GameManager:
 
         # Initialize first game
         game = self.game_list[self.current_game_index]
-        self.game_instance = game(self.screen)
+        self.game_instance = game(self.screen, self.game_handler)
 
         while self.game_running:
             self.update()
@@ -32,7 +34,9 @@ class GameManager:
 
     def update(self):
         # First thing is to check for occurring events.
-        events = pygame.event.get()
+        self.game_handler.update()
+
+        events = self.game_handler.events
         self.check_events(events)
 
         self.game_instance.update(self.screen, self.delta_time, events)
