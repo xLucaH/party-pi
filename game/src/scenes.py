@@ -1,4 +1,3 @@
-from abc import ABC, abstractmethod
 import pygame
 
 
@@ -22,7 +21,7 @@ class SceneBase:
                          """
         self.next = self
 
-        self.font = pygame.font.SysFont('Comic Sans MS', 30)
+        self.font = pygame.font.SysFont('DejaVu Serif', 30)
         #self.surface = graphics.get_window_surface()
 
     def update(self,  screen, delta_time, events):

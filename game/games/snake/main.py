@@ -121,7 +121,7 @@ class SnakeGame(SceneBase):
         return False
 
     def your_score(self, score):
-        value = self.font.render("Your Score: " + str(score), True, Colors.WHITE)
+        value = self.font.render("Your Score: " + str(score), True, Colors.BLACK)
         self.screen.blit(value, [0, 0])
 
     def our_snake(self, snake_block, snake_list):
