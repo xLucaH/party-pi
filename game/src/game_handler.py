@@ -29,6 +29,7 @@ class GameHandler:
 
         if IS_RASPBERRY:
             self.button = gpiozero.Button(settings.BUTTON_PIN_NUMBER, pull_up=False)
+            self.button.when_pressed = self.gpio_button_callback
 
     def add_score(self, value):
         self._score += value
@@ -40,6 +41,9 @@ class GameHandler:
         self.button_pressed = False
         self.events = pygame.event.get()
 
+    def gpio_button_callback(self):
+        self.button_pressed = True
+
     def is_button_pressed(self):
         """
         Checks weather a button press occurred.
@@ -48,10 +52,6 @@ class GameHandler:
         if IS_RASPBERRY and self.button:
             # Pin numbers maps not to physical order but to gpio order/bmc
             # Taken from https://www.raspberrypi-spy.co.uk/2012/06/simple-guide-to-the-rpi->
-
-            if self.button.is_pressed:
-                self.button_pressed = True
-
             return self.button_pressed
 
         for event in self.events:
