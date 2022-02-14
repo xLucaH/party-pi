@@ -1,9 +1,10 @@
 import pygame
-from src.game_manager import GameManager
+import sys
+from game.src.game_manager import GameManager
 
 
 def main():
-    pygame.init()  # Init pygame is the first thing we ALWAYS have to do
+    pygame.init()  # Init game is the first thing we ALWAYS have to do
     pygame.font.init()  # Using fonts as well
 
     pygame.mouse.set_visible(False)

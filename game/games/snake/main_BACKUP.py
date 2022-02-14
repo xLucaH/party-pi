@@ -16,7 +16,7 @@ dis_height = 320
 dis = pygame.display.set_mode((dis_width, dis_height))
 
 # Using absolute paths will make it unable to run the game on different pc's, since every path is likely to be unique.
-# bg = pygame.image.load('C:\\Users\\Carsten\\partypi\\party-pi\\src\\games\\snake\\background.jpg')
+# bg = game.image.load('C:\\Users\\Carsten\\partypi\\party-pi\\game\\games\\snake\\background.jpg')
 bg = pygame.image.load('background.jpg')  # If a file is in the same directory, you can just import it by its name.
 bg = pygame.transform.scale(bg, (dis_width, dis_height))
 

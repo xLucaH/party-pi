@@ -41,5 +41,5 @@ class SceneBase:
         next_scene.next = next_scene
 
     def terminate(self):
-        """Quit pygame"""
+        """Quit game"""
         pygame.quit()

@@ -1,8 +1,8 @@
 import pygame
-from src import settings
+from .. import settings
 
-from src.games.snake.main import SnakeGame
-from src.game_handler import GameHandler
+from ..games.snake.main import SnakeGame
+from ..src.game_handler import GameHandler
 
 
 class GameManager:

@@ -1,6 +1,6 @@
 import pygame
 import io
-from src import settings
+from .. import settings
 
 try:
     with io.open('/sys/firmware/devicetree/base/model', 'r') as m:
@@ -18,7 +18,7 @@ if IS_RASPBERRY:
 
 class GameHandler:
     """
-    Provides the event handling for our pygame games.
+    Provides the event handling for our game games.
     """
 
     def __init__(self):

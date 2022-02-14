@@ -1,7 +1,7 @@
 import pygame
 import random
 
-from src.scenes import SceneBase
+from game.src.scenes import SceneBase
 
 
 class Colors:
@@ -40,9 +40,6 @@ class SnakeGame(SceneBase):
         self.snake_list = []
         self.length_of_snake = 1
 
-        self.bg = pygame.image.load('games/snake/background.jpg')
-        self.bg = pygame.transform.scale(self.bg, (self.screen_x, self.screen_y))
-
         # List of all 4 direction values the snake can move.
         self.directions = [
             (0, - self.snake_block),
@@ -70,7 +67,8 @@ class SnakeGame(SceneBase):
             self.x1_change = (self.directions[self.current_direction][0] * self.snake_speed) * delta_time
             self.y1_change = (self.directions[self.current_direction][1] * self.snake_speed) * delta_time
 
-        self.screen.blit(self.bg, (0, 0))
+        self.screen.fill(Colors.WHITE)
+
 
         # assigning new position to x and y
         self.x1 += self.x1_change
