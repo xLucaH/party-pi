@@ -6,6 +6,7 @@ try:
     with io.open('/sys/firmware/devicetree/base/model', 'r') as m:
         if 'raspberry pi' in m.read().lower():
             IS_RASPBERRY = True
+            print("USING RASPBERRY PI OS")
 
 except Exception as e:
     print(e)
