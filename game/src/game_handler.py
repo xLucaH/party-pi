@@ -38,8 +38,8 @@ class GameHandler:
         return self._score
 
     def update(self):
-        self.button_pressed = False
         self.events = pygame.event.get()
+        self.button_pressed = False
 
     def gpio_button_callback(self):
         print("BUTTON PRESSED")
