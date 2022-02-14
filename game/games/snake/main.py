@@ -100,8 +100,6 @@ class SnakeGame(SceneBase):
         self.our_snake(self.snake_block, self.snake_list)
         self.your_score(self.length_of_snake - 1)
 
-        pygame.display.update()
-
         #print((self.x1, self.y1), (self.foodx, self.foody))
 
         # if snake ate snacks, generate a new one

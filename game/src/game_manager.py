@@ -42,7 +42,7 @@ class GameManager:
         self.game_instance.update(self.screen, self.delta_time, events)
 
         # Last things we want to do.
-        pygame.display.flip()
+        pygame.display.update()
 
         self.delta_time = self.clock.tick(self.fps) / 1000.0
         self.clock.tick(self.fps)
