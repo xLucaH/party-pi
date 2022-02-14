@@ -26,6 +26,9 @@ class GameHandler:
         self.events = []
         self.button_pressed = False
         self.button = None
+        self.delta_time = 1
+
+        self.button_subscriber = []
 
         if IS_RASPBERRY:
             self.button = gpiozero.Button(settings.BUTTON_PIN_NUMBER, pull_up=False)
@@ -37,24 +40,24 @@ class GameHandler:
     def get_score(self):
         return self._score
 
-    def update(self):
+    def update(self, delta_time):
+        self.delta_time = delta_time
         self.events = pygame.event.get()
-        self.button_pressed = False
 
     def gpio_button_callback(self):
         print("BUTTON PRESSED")
-        self.button_pressed = True
+
+        for subscriber in self.button_subscriber:
+            subscriber()
+
+    def subscribe_to_button(self, func):
+        self.button_subscriber.append(func)
 
     def is_button_pressed(self):
         """
         Checks weather a button press occurred.
         Handles input via a physical button when using a raspberry, otherwise it uses the keyboard's space bar.
         """
-        if IS_RASPBERRY and self.button:
-            # Pin numbers maps not to physical order but to gpio order/bmc
-            # Taken from https://www.raspberrypi-spy.co.uk/2012/06/simple-guide-to-the-rpi->
-            return self.button_pressed
-
         for event in self.events:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 return True

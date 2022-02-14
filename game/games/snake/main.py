@@ -25,6 +25,7 @@ class SnakeGame(SceneBase):
         self.screen_x, self.screen_y = self.screen.get_size()
 
         self.handler = handler
+        self.handler.subscribe_to_button(self.change_direction)
 
         self.game_over = False
         self.game_close = False
@@ -54,21 +55,22 @@ class SnakeGame(SceneBase):
         self.foodx = round(random.randrange(0, self.screen_x - self.snake_block) / 10.0) * 10.0
         self.foody = round(random.randrange(0, self.screen_y - self.snake_block) / 10.0) * 10.0
 
+    def change_direction(self, delta_time):
+        self.current_direction += 1
+
+        # Reset current direction to first entry.
+        if self.current_direction >= 4:
+            self.current_direction = 0
+
+        # Set x and y change to our current direction the snake is moving.
+        self.x1_change = (self.directions[self.current_direction][0] * self.snake_speed) * delta_time
+        self.y1_change = (self.directions[self.current_direction][1] * self.snake_speed) * delta_time
+
     def update(self, screen, delta_time, events):
-
-        if self.handler.is_button_pressed():
-            self.current_direction += 1
-
-            # Reset current direction to first entry.
-            if self.current_direction >= 4:
-                self.current_direction = 0
-
-            # Set x and y change to our current direction the snake is moving.
-            self.x1_change = (self.directions[self.current_direction][0] * self.snake_speed) * delta_time
-            self.y1_change = (self.directions[self.current_direction][1] * self.snake_speed) * delta_time
-
         self.screen.fill(Colors.WHITE)
 
+        if self.handler.is_button_pressed():
+            self.change_direction(delta_time)
 
         # assigning new position to x and y
         self.x1 += self.x1_change

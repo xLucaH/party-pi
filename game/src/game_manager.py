@@ -34,7 +34,7 @@ class GameManager:
 
     def update(self):
         # First thing is to check for occurring events.
-        self.game_handler.update()
+        self.game_handler.update(self.delta_time)
 
         events = self.game_handler.events
         self.check_events(events)
