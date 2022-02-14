@@ -29,7 +29,7 @@ class GameHandler:
 
         if IS_RASPBERRY:
             self.button = gpiozero.Button(settings.BUTTON_PIN_NUMBER, pull_up=False)
-            self.button.when_pressed = self.gpio_button_callback
+            self.button.when_released = self.gpio_button_callback
 
     def add_score(self, value):
         self._score += value
@@ -42,6 +42,7 @@ class GameHandler:
         self.events = pygame.event.get()
 
     def gpio_button_callback(self):
+        print("BUTTON PRESSED")
         self.button_pressed = True
 
     def is_button_pressed(self):
