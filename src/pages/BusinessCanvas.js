@@ -1,5 +1,6 @@
 import React from 'react';
 import { CostTable } from '../assets/html/productionCost';
+import BreakEven from '../assets/html/breakEven';
 import Persona from '../assets/images/Maria.PNG';
 import Reparatur_PC from '../assets/images/Reparatur_PC-428539_1170.pixabay.jpg';
 import Kundensupport from '../assets/images/kundenservice.jpg'
@@ -54,7 +55,7 @@ const BusinessCanvas = () => {
         <h3 style={{ marginTop: '0.5em', marginBottom: '0.1em' }}> Channels</h3>
         <span style={{ margin: '0.5em', padding: '0 10px' }}>
           <p>Children and Teenagers nowadays are often found to consume all kinds of information online. Therefore we have implemented a website where orders can be submitted.
-            The Party-Pi® will not be available in shops. Our work should be shown and advertised via videos and photos.
+            The Party-Pi® will not be available in retail stores. Our work should be shown and advertised via videos, photos and words.
           </p>
           <p>We also can be found on Instagram, Twitter, Facebook and Telegram
             where we post news about our little gaming console.
@@ -87,7 +88,7 @@ const BusinessCanvas = () => {
         <h3 style={{ marginTop: '0.5em', marginBottom: '0.1em' }}> Key Partnerships</h3>
         <span style={{ margin: '0', padding: '0 25px', display: 'flex' }}>
           <p>We found a great business partner in AOpen, which is known for the motherboard manufacture.
-            This allows us to make a cheap bulk purchase of boards for our consoles.
+            This allows us to make a cheaper bulk purchase of boards for our consoles.
           </p>
           <img src={AOpen} alt='AOpen' style={{ maxWidth: '40%', maxHeight: '40%', objectFit: 'contain' }} />
         </span>
@@ -109,9 +110,9 @@ const BusinessCanvas = () => {
             Our hardware expert is also responsible for purchasing our wares.
           </p>
           <p> An overview of our hardware and the estimated prices can be found at <span style={{ fontWeight: 'bold' }}>Cost Structures</span>.
-            The most important ressources we need despite the hardware are the copyright licenses that we need to purchase.
+            The most important ressources we need aside from the hardware are the copyright licenses that we need to purchase.
             We also don't need big production space for now but for future expansion it would be neccessary to rent space
-            to store and produce our products.
+            for storage and production.
           </p>
           <hr style={{ marginTop: '1em' }} />
         </span>
@@ -131,8 +132,8 @@ const BusinessCanvas = () => {
             To achieve that we plan to:
           </p>
           <ul style={{ margin: '0.5em', padding: '0 25px' }}>
-            <li>optimize our customer support in being available at much as possible</li>
-            <li>maincmtain our social media and website to prevent outdated information</li>
+            <li>optimize our customer support in being available as much as possible</li>
+            <li>maintain our social media and website to prevent outdated information</li>
             <li>always try to come up with new minigames or investigate already present minigames
               to be able to implement them
             </li>
@@ -149,6 +150,16 @@ const BusinessCanvas = () => {
         <CostTable />
         <ul style={{ margin: '0.5em', padding: '0 25px', marginBottom: '2em' }}>
 
+          <li>A compatitor called <span style={{ fontStyle: 'italic' }}>'Nintendo'</span> which sells gameboys. These gameboys are on average around 299€.
+            Since our production costs and delivery costs are 85€ per Party-Pi®, we would set the price at <span style={{ fontWeight: 'bold' }}>179,99€</span> brutto to undercut the market
+            and cover our costs and expenses well enough.
+            Our breakeven analysis shows that we need to sell 5 Party-Pi® consoles per day to generate a minimum profit that covers our costs and pays our salary.
+          </li>
+        </ul>
+        <div style={{ margin: '0.5em', padding: '0 25px', marginBottom: '2em' }}>
+          <BreakEven />
+        </div>
+        <ul style={{ margin: '0.5em', padding: '0 25px', marginBottom: '2em' }}>
           <li>The acquisition of new customers should not result in excessive costs due to our choice of distribution channels.
             We have a fixed budget for marketing, which includes advertisements and commercials.
             Currently, 250€ is budgeted.</li>
@@ -156,10 +167,11 @@ const BusinessCanvas = () => {
             We plan to spend 1/3 of our revenue on our employees.
           </li>
           <li>Additional costs will arise when we purchase copyrights for some of our minigames.
-            We are not sure yet how many of these licences will be needed in the near future.</li>
+            We are not sure yet how many of these licences will be needed in the near future.
+          </li>
         </ul>
       </div>
-    </div>
+    </div >
   );
 };
 
