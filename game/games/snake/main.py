@@ -13,7 +13,7 @@ class Colors:
 
 class Config:
     SNAKE_BLOCK = 15
-    SNAKE_SPEED = 12
+    SNAKE_SPEED = 20
 
 
 class SnakeGame(SceneBase):
