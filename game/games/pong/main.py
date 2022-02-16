@@ -47,7 +47,7 @@ class PongGame(SceneBase):
         self.ball_centre_x = (int((random.random() * 100000) % (self.size[0] - 200))) + 100
         self.ball_radius = 15
         self.ball_direction = 'UP_LEFT'
-        self.ball_speed = 10  # Ball speed.
+        self.ball_speed = 15  # Ball speed.
         self.hit_bar_speed = 40  # Hit Bar Speed.
         self.hit_bar_length = 100
         self.hit_bar_height = 25
@@ -58,7 +58,7 @@ class PongGame(SceneBase):
         self.game_over = False
         self.paused_game = False
         self.score = 0
-        self.speed = 15
+        self.speed = 20
         self.panel_direction = self.speed
         self.screen = screen
 
