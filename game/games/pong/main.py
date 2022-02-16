@@ -26,309 +26,251 @@ import sys
 import random
 
 from game import settings
-
-# Initial Conditions.
-white = (255, 255, 255)
-black = (0, 0, 0)
-green = (0, 255, 0)
-red = (255, 0, 0)
-blue = (0, 0, 255)
-gray = (128, 128, 128)
-size = settings.SCREEN_SIZE
-ball_centre_y = 150
-ball_centre_x = (int((random.random() * 100000) % (size[0] - 200))) + 100
-ball_radius = 15
-ball_direction = 'UP_LEFT'
-ball_speed = 5  # Ball speed.
-hit_bar_speed = 18  # Hit Bar Speed.
-hit_bar_length = 100
-hit_bar_height = 25
-hit_bar_left = int(size[0] / 2) - int(hit_bar_length / 2)
-time1 = pygame.time.get_ticks()
-can_accel_left = False
-can_accel_right = False
-game_over = False
-paused_game = False
-score = 0
+from game.src.scenes import SceneBase
 
 
-# Function to reset the game.
+class PongGame(SceneBase):
 
-def reset_game():
-    global ball_centre_y
-    global ball_centre_x
-    global ball_direction
-    global hit_bar_left
-    global time1
-    global can_accel_left
-    global can_accel_right
-    global game_over
-    global paused_game
-    global score
-    ball_centre_y = 150
-    ball_centre_x = (int((random.random() * 100000) % (size[0] - 200))) + 100
-    ball_direction = 'UP_LEFT'
-    hit_bar_left = int(size[0] / 2) - int(hit_bar_length / 2)
-    time1 = pygame.time.get_ticks()
-    can_accel_left = False
-    can_accel_right = False
-    game_over = False
-    paused_game = False
-    score = 0
+    def __init__(self, screen, handler):
+        super().__init__()
 
+        self.handler = handler
 
-# Function to Draw Initial Screen.
+        self.white = (255, 255, 255)
+        self.black = (0, 0, 0)
+        self.green = (0, 255, 0)
+        self.red = (255, 0, 0)
+        self.blue = (0, 0, 255)
+        self.gray = (128, 128, 128)
+        self.size = settings.SCREEN_SIZE
+        self.ball_centre_y = 150
+        self.ball_centre_x = (int((random.random() * 100000) % (self.size[0] - 200))) + 100
+        self.ball_radius = 15
+        self.ball_direction = 'UP_LEFT'
+        self.ball_speed = 10  # Ball speed.
+        self.hit_bar_speed = 40  # Hit Bar Speed.
+        self.hit_bar_length = 100
+        self.hit_bar_height = 25
+        self.hit_bar_left = int(self.size[0] / 2) - int(self.hit_bar_length / 2)
+        self.time1 = pygame.time.get_ticks()
+        self.can_accel_left = False
+        self.can_accel_right = False
+        self.game_over = False
+        self.paused_game = False
+        self.score = 0
+        self.speed = 15
+        self.panel_direction = self.speed
+        self.screen = screen
 
-def draw_initial_screen():
-    play()
-    draw_screen()
-    font = pygame.font.Font(None, 220)
-    gameText = font.render("Nithin's", True, white)
-    overText = font.render('Pong', True, white)
-    over1Text = font.render('Game', True, white)
-    gameRect = gameText.get_rect()
-    overRect = overText.get_rect()
-    over1Rect = over1Text.get_rect()
-    gameRect.centerx = (size[0] / 2)
-    gameRect.centery = (size[1] / 2) - 150
-    overRect.centerx = (size[0] / 2)
-    overRect.centery = (size[1] / 2)
-    over1Rect.centerx = (size[0] / 2)
-    over1Rect.centery = (size[1] / 2 + 150)
-    screen.blit(gameText, gameRect)
-    screen.blit(overText, overRect)
-    screen.blit(over1Text, over1Rect)
-    print_press_any_key()
-    pygame.display.update()
+        self.handler.subscribe_to_button(self.change_direction)
 
+    def reset_game(self):
+        self.ball_centre_y = 150
+        self.ball_centre_x = (int((random.random() * 100000) % (self.size[0] - 200))) + 100
+        self.ball_direction = 'UP_LEFT'
+        self.hit_bar_left = int(self.size[0] / 2) - int(self.hit_bar_length / 2)
+        self.time1 = pygame.time.get_ticks()
+        self.can_accel_left = False
+        self.can_accel_right = False
+        self.game_over = False
+        self.paused_game = False
+        self.score = 0
 
-# Function to wait for any key press.
-
-def wait_for_any_key():
-    while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                sys.exit()
-                pygame.quit()
-            if event.type == pygame.KEYDOWN:
-                return True
-
-
-# Function to print Game Over.
-
-def print_game_over():
-    font = pygame.font.Font(None, 260)
-    font1 = pygame.font.Font(None, 50)
-    gameText = font.render('Game', True, white)
-    overText = font.render('Over', True, white)
-    sc = "Your Score : " + str(score)
-    scoreText = font1.render(sc, True, white)
-    gameRect = gameText.get_rect()
-    overRect = overText.get_rect()
-    scoreRect = scoreText.get_rect()
-    gameRect.centerx = (size[0] / 2)
-    gameRect.centery = (size[1] / 2) - 150
-    overRect.centerx = (size[0] / 2)
-    overRect.centery = (size[1] / 2)
-    scoreRect.centerx = (size[0] / 2)
-    scoreRect.centery = (size[1] / 2) + 120
-    screen.blit(gameText, gameRect)
-    screen.blit(overText, overRect)
-    screen.blit(scoreText, scoreRect)
-
-
-# Function to print paused game.
-
-def print_paused_game():
-    font = pygame.font.Font(None, 230)
-    overText = font.render('Paused', True, white)
-    overRect = overText.get_rect()
-    overRect.centerx = (size[0] / 2)
-    overRect.centery = (size[1] / 2)
-    screen.blit(overText, overRect)
-    print_press_any_key()
-
-
-# Function to print press any key.
-
-def print_press_any_key():
-    global paused_game
-    font = pygame.font.Font(None, 30)
-    if paused_game:
-        text = font.render("Press Escape key to continue", True, gray)
-    else:
-        text = font.render("Press any key to continue", True, gray)
-    rect = text.get_rect()
-    rect.centerx = size[0] - 150
-    rect.centery = size[1] - 50
-    screen.blit(text, rect)
-
-
-# Function to draw screen.
-
-def draw_screen():
-    screen.fill(black)
-    font = pygame.font.Font(None, 100)
-    scoreText = font.render(str(score), True, white)
-    scoreRect = scoreText.get_rect()
-    scoreRect.centerx = size[0] - 100
-    scoreRect.centery = 100
-    screen.blit(scoreText, scoreRect)
-    pygame.draw.circle(screen, red, (ball_centre_x, ball_centre_y), ball_radius)
-    pygame.draw.rect(screen, blue, (hit_bar_left, (size[1] - hit_bar_height), hit_bar_length, hit_bar_height))
-    pygame.display.update()
-
-
-# Main Game Play Function.
-
-def play():
-    global hit_bar_left
-    global time1
-    global ball_direction
-    global ball_centre_x
-    global ball_centre_y
-    global score
-    global game_over
-    if pygame.time.get_ticks() > (time1 + 11):
-        # Code to control movement of ball.
-        if ball_direction == 'UP_LEFT':
-            if (ball_centre_x - ball_speed) > ball_radius and (ball_centre_y - ball_speed) > ball_radius:
-                ball_centre_x -= ball_speed
-                ball_centre_y -= ball_speed
-            elif (ball_centre_y - ball_speed) > ball_radius:  # Ball exceeds left side of screen.
-                ball_direction = 'UP_RIGHT'
-            elif (ball_centre_x - ball_speed) > ball_radius:  # Ball exceeds top of screen.
-                ball_direction = 'DOWN_LEFT'
-            else:  # Ball exceeds both left and top of screen.
-                ball_direction = 'DOWN_RIGHT'
-        if ball_direction == 'UP_RIGHT':
-            if (ball_centre_x + ball_speed) < (size[0] - ball_radius) and (ball_centre_y - ball_speed) > ball_radius:
-                ball_centre_x += ball_speed
-                ball_centre_y -= ball_speed
-            elif (ball_centre_y - ball_speed) > ball_radius:  # Ball exceeds right side of screen.
-                ball_direction = 'UP_LEFT'
-            elif (ball_centre_x + ball_speed) < (size[0] - ball_radius):  # Ball exceeds bottom of screen.
-                ball_direction = 'DOWN_RIGHT'
-            else:  # Ball exceeds both right side and bottom of screen.
-                ball_direction = 'DOWN_LEFT'
-        if ball_direction == 'DOWN_LEFT':
-            if (ball_centre_x - ball_speed) > ball_radius and (ball_centre_y + ball_speed) < (size[1] - ball_radius):
-                if (ball_centre_x + ball_radius) >= hit_bar_left and (ball_centre_x - ball_radius) <= (
-                        hit_bar_left + hit_bar_length):
-                    if (ball_centre_y + ball_speed) < (size[1] - (ball_radius + hit_bar_height)):
-                        ball_centre_x -= ball_speed
-                        ball_centre_y += ball_speed
-                    else:  # Condition of scoring.
-                        ball_direction = 'UP_LEFT'
-                        score += 1
-                elif ((ball_centre_x + ball_radius) < hit_bar_left or (ball_centre_x - ball_radius) > (
-                        hit_bar_left + hit_bar_length)):
-                    if (ball_centre_y + ball_radius) > (size[1] - hit_bar_height):  # Condition of game over.
-                        ball_centre_y = size[1] - ball_radius
-                        game_over = True
-                    else:
-                        ball_centre_x -= ball_speed
-                        ball_centre_y += ball_speed
-                else:
-                    ball_centre_x -= ball_speed
-                    ball_centre_y += ball_speed
-
-            elif (ball_centre_x - ball_speed) > ball_radius:
-                ball_direction = 'UP_LEFT'
-            elif (ball_centre_y + ball_speed) < (size[1] - ball_radius):
-                ball_direction = 'DOWN_RIGHT'
-            else:
-                direction = 'UP_RIGHT'
-        if ball_direction == 'DOWN_RIGHT':
-            if (ball_centre_x + ball_speed) < (size[0] - ball_radius) and (ball_centre_y + ball_speed) < (
-                    size[1] - ball_radius):
-                if (ball_centre_x + ball_radius) >= hit_bar_left and (ball_centre_x - ball_radius) <= (
-                        hit_bar_left + hit_bar_length):
-                    if (ball_centre_y + ball_speed) < (size[1] - (ball_radius + hit_bar_height)):
-                        ball_centre_x += ball_speed
-                        ball_centre_y += ball_speed
-                    else:  # Condition of scoring.
-                        ball_direction = 'UP_RIGHT'
-                        score += 1
-                elif ((ball_centre_x + ball_radius) < hit_bar_left or (ball_centre_x - ball_radius) > (
-                        hit_bar_left + hit_bar_length)):
-                    if (ball_centre_y + ball_radius) > (size[1] - hit_bar_height):  # Condition of game over.
-                        ball_centre_y = size[1] - ball_radius
-                        game_over = True
-                    else:
-                        ball_centre_x += ball_speed
-                        ball_centre_y += ball_speed
-                else:
-                    ball_centre_x += ball_speed
-                    ball_centre_y += ball_speed
-            elif (ball_centre_x + ball_speed) < (size[0] - ball_radius):
-                ball_direction = 'UP_RIGHT'
-            elif (ball_centre_y + ball_speed) < (size[1] - ball_radius):
-                ball_direction = 'DOWN_LEFT'
-            else:
-                direction = 'UP_LEFT'
-        # Code to control Hit Bar Position.
-
-        if can_accel_left:
-            if (hit_bar_left - hit_bar_speed) >= 0:
-                hit_bar_left -= hit_bar_speed
-        if can_accel_right:
-            if (hit_bar_left + hit_bar_length + hit_bar_speed) <= size[0]:
-                hit_bar_left += hit_bar_speed
-
-        time1 = pygame.time.get_ticks()
-
-
-# Initial screen.
-
-pygame.init()
-screen = pygame.display.set_mode(size, 0, 32)
-pygame.display.set_caption("Nithin's Pong Game")
-draw_initial_screen()
-
-while True:
-    if wait_for_any_key():
-        break
-
-# Main game loop
-
-while True:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            if paused_game:
-                sys.exit()
-                pygame.quit()
-            game_over = True
-            print_game_over()
-            pygame.display.update()
-            time3 = pygame.time.get_ticks()
-            while pygame.time.get_ticks() < (time3 + 1000):
-                pygame.time.get_ticks()
-            sys.exit()
-            pygame.quit()
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
-                if paused_game == False:
-                    paused_game = True
-                    print_paused_game()
-                    pygame.display.update()
-                else:
-                    paused_game = False
-            if event.key == pygame.K_LEFT:
-                can_accel_left = True
-            if event.key == pygame.K_RIGHT:
-                can_accel_right = True
-        if event.type == pygame.KEYUP:
-            if event.key == pygame.K_LEFT:
-                can_accel_left = False
-            if event.key == pygame.K_RIGHT:
-                can_accel_right = False
-    if paused_game == False:
-        play()
-        draw_screen()
-    if game_over:
-        print_game_over()
-        print_press_any_key()
+    def draw_initial_screen(self):
+        self.play()
+        self.draw_screen()
+        font = pygame.font.Font(None, 220)
+        gameText = font.render("Nithin's", True, self.white)
+        overText = font.render('Pong', True, self.white)
+        over1Text = font.render('Game', True, self.white)
+        gameRect = gameText.get_rect()
+        overRect = overText.get_rect()
+        over1Rect = over1Text.get_rect()
+        gameRect.centerx = (self.size[0] / 2)
+        gameRect.centery = (self.size[1] / 2) - 150
+        overRect.centerx = (self.size[0] / 2)
+        overRect.centery = (self.size[1] / 2)
+        over1Rect.centerx = (self.size[0] / 2)
+        over1Rect.centery = (self.size[1] / 2 + 150)
+        self.screen.blit(gameText, gameRect)
+        self.screen.blit(overText, overRect)
+        self.screen.blit(over1Text, over1Rect)
+        self.print_press_any_key()
         pygame.display.update()
-        if wait_for_any_key():
-            reset_game()
+
+    def print_game_over(self):
+        font = pygame.font.Font(None, 260)
+        font1 = pygame.font.Font(None, 50)
+        gameText = font.render('Game', True, self.white)
+        overText = font.render('Over', True, self.white)
+        sc = "Your Score : " + str(self.score)
+        scoreText = font1.render(sc, True, self.white)
+        gameRect = gameText.get_rect()
+        overRect = overText.get_rect()
+        scoreRect = scoreText.get_rect()
+        gameRect.centerx = (self.size[0] / 2)
+        gameRect.centery = (self.size[1] / 2) - 150
+        overRect.centerx = (self.size[0] / 2)
+        overRect.centery = (self.size[1] / 2)
+        scoreRect.centerx = (self.size[0] / 2)
+        scoreRect.centery = (self.size[1] / 2) + 120
+        self.screen.blit(gameText, gameRect)
+        self.screen.blit(overText, overRect)
+        self.screen.blit(scoreText, scoreRect)
+
+    def print_paused_game(self):
+        font = pygame.font.Font(None, 230)
+        overText = font.render('Paused', True, self.white)
+        overRect = overText.get_rect()
+        overRect.centerx = (self.size[0] / 2)
+        overRect.centery = (self.size[1] / 2)
+        self.screen.blit(overText, overRect)
+        self.print_press_any_key()
+
+    def print_press_any_key(self):
+        font = pygame.font.Font(None, 30)
+        if self.paused_game:
+            text = font.render("Press Escape key to continue", True, self.gray)
+        else:
+            text = font.render("Press any key to continue", True, self.gray)
+        rect = text.get_rect()
+        rect.centerx = self.size[0] - 150
+        rect.centery = self.size[1] - 50
+        self.screen.blit(text, rect)
+
+    def draw_screen(self):
+        self.screen.fill(self.black)
+        font = pygame.font.Font(None, 100)
+        scoreText = font.render(str(self.score), True, self.white)
+        scoreRect = scoreText.get_rect()
+        scoreRect.centerx = self.size[0] - 100
+        scoreRect.centery = 100
+        self.screen.blit(scoreText, scoreRect)
+        pygame.draw.circle(self.screen, self.red, (self.ball_centre_x, self.ball_centre_y), self.ball_radius)
+        pygame.draw.rect(self.screen, self.blue, (self.hit_bar_left, (self.size[1] - self.hit_bar_height), self.hit_bar_length, self.hit_bar_height))
+
+    def play(self):
+        if pygame.time.get_ticks() > (self.time1 + 11):
+            # Code to control movement of ball.
+            if self.ball_direction == 'UP_LEFT':
+                if (self.ball_centre_x - self.ball_speed) > self.ball_radius and (self.ball_centre_y - self.ball_speed) > self.ball_radius:
+                    self.ball_centre_x -= self.ball_speed
+                    self.ball_centre_y -= self.ball_speed
+                elif (self.ball_centre_y - self.ball_speed) > self.ball_radius:  # Ball exceeds left side of screen.
+                    self.ball_direction = 'UP_RIGHT'
+                elif (self.ball_centre_x - self.ball_speed) > self.ball_radius:  # Ball exceeds top of screen.
+                    self.ball_direction = 'DOWN_LEFT'
+                else:  # Ball exceeds both left and top of screen.
+                    self.ball_direction = 'DOWN_RIGHT'
+            if self.ball_direction == 'UP_RIGHT':
+                if (self.ball_centre_x + self.ball_speed) < (self.size[0] - self.ball_radius) and (self.ball_centre_y - self.ball_speed) > self.ball_radius:
+                    self.ball_centre_x += self.ball_speed
+                    self.ball_centre_y -= self.ball_speed
+                elif (self.ball_centre_y - self.ball_speed) > self.ball_radius:  # Ball exceeds right side of screen.
+                    self.ball_direction = 'UP_LEFT'
+                elif (self.ball_centre_x + self.ball_speed) < (self.size[0] - self.ball_radius):  # Ball exceeds bottom of screen.
+                    self.ball_direction = 'DOWN_RIGHT'
+                else:  # Ball exceeds both right side and bottom of screen.
+                    self.ball_direction = 'DOWN_LEFT'
+            if self.ball_direction == 'DOWN_LEFT':
+                if (self.ball_centre_x - self.ball_speed) > self.ball_radius and (self.ball_centre_y + self.ball_speed) < (self.size[1] - self.ball_radius):
+                    if (self.ball_centre_x + self.ball_radius) >= self.hit_bar_left and (self.ball_centre_x - self.ball_radius) <= (
+                            self.hit_bar_left + self.hit_bar_length):
+                        if (self.ball_centre_y + self.ball_speed) < (self.size[1] - (self.ball_radius + self.hit_bar_height)):
+                            self.ball_centre_x -= self.ball_speed
+                            self.ball_centre_y += self.ball_speed
+                        else:  # Condition of scoring.
+                            self.ball_direction = 'UP_LEFT'
+                            self.score += 1
+                    elif ((self.ball_centre_x + self.ball_radius) < self.hit_bar_left or (self.ball_centre_x - self.ball_radius) > (
+                            self.hit_bar_left + self.hit_bar_length)):
+                        if (self.ball_centre_y + self.ball_radius) > (self.size[1] - self.hit_bar_height):  # Condition of game over.
+                            self.ball_centre_y = self.size[1] - self.ball_radius
+                            self.game_over = True
+                        else:
+                            self.ball_centre_x -= self.ball_speed
+                            self.ball_centre_y += self.ball_speed
+                    else:
+                        self.ball_centre_x -= self.ball_speed
+                        self.ball_centre_y += self.ball_speed
+
+                elif (self.ball_centre_x - self.ball_speed) > self.ball_radius:
+                    self.ball_direction = 'UP_LEFT'
+                elif (self.ball_centre_y + self.ball_speed) < (self.size[1] - self.ball_radius):
+                    self.ball_direction = 'DOWN_RIGHT'
+                else:
+                    self.direction = 'UP_RIGHT'
+            if self.ball_direction == 'DOWN_RIGHT':
+                if (self.ball_centre_x + self.ball_speed) < (self.size[0] - self.ball_radius) and (self.ball_centre_y + self.ball_speed) < (
+                        self.size[1] - self.ball_radius):
+                    if (self.ball_centre_x + self.ball_radius) >= self.hit_bar_left and (self.ball_centre_x - self.ball_radius) <= (
+                            self.hit_bar_left + self.hit_bar_length):
+                        if (self.ball_centre_y + self.ball_speed) < (self.size[1] - (self.ball_radius + self.hit_bar_height)):
+                            self.ball_centre_x += self.ball_speed
+                            self.ball_centre_y += self.ball_speed
+                        else:  # Condition of scoring.
+                            self.ball_direction = 'UP_RIGHT'
+                            self.score += 1
+                    elif ((self.ball_centre_x + self.ball_radius) < self.hit_bar_left or (self.ball_centre_x - self.ball_radius) > (
+                            self.hit_bar_left + self.hit_bar_length)):
+                        if (self.ball_centre_y + self.ball_radius) > (self.size[1] - self.hit_bar_height):  # Condition of game over.
+                            self.ball_centre_y = self.size[1] - self.ball_radius
+                            self.game_over = True
+                        else:
+                            self.ball_centre_x += self.ball_speed
+                            self.ball_centre_y += self.ball_speed
+                    else:
+                        self.ball_centre_x += self.ball_speed
+                        self.ball_centre_y += self.ball_speed
+                elif (self.ball_centre_x + self.ball_speed) < (self.size[0] - self.ball_radius):
+                    self.ball_direction = 'UP_RIGHT'
+                elif (self.ball_centre_y + self.ball_speed) < (self.size[1] - self.ball_radius):
+                    self.ball_direction = 'DOWN_LEFT'
+                else:
+                    self.ball_direction = 'UP_LEFT'
+            # Code to control Hit Bar Position.
+
+            self.hit_bar_left += self.panel_direction
+            self.panel_direction = self.speed
+
+            self.time1 = pygame.time.get_ticks()
+
+    def change_direction(self, delta):
+        self.speed = (self.speed * -1)
+        self.panel_direction = self.speed
+
+    def update(self, screen, delta_time, events):
+
+        if self.handler.is_button_pressed():
+            self.change_direction(delta_time)
+
+        for event in events:
+            if event.type == pygame.QUIT:
+                if self.paused_game:
+                    pygame.quit()
+                    sys.exit()
+
+                self.game_over = True
+                self.print_game_over()
+                pygame.display.update()
+                time3 = pygame.time.get_ticks()
+                while pygame.time.get_ticks() < (time3 + 1000):
+                    pygame.time.get_ticks()
+
+                pygame.quit()
+                sys.exit()
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    if self.paused_game == False:
+                        self.paused_game = True
+                        self.print_paused_game()
+                        pygame.display.update()
+                    else:
+                        self.paused_game = False
+
+        if self.paused_game == False:
+            self.play()
+            self.draw_screen()
+        if self.game_over:
+            self.handler.game_over()

@@ -3,6 +3,8 @@ import pygame
 from .. import settings
 
 from ..games.snake.main import SnakeGame
+from ..games.pong.main import PongGame
+
 from ..src.game_handler import GameHandler
 
 
@@ -10,7 +12,7 @@ class GameManager:
 
     def __init__(self):
         self.game_handler = GameHandler(self)
-        self.screen = pygame.display.set_mode(settings.SCREEN_SIZE, pygame.FULLSCREEN)
+        self.screen = pygame.display.set_mode(settings.SCREEN_SIZE)
 
         self.fps = settings.FPS
         self.clock = pygame.time.Clock()
@@ -19,7 +21,7 @@ class GameManager:
 
         self.game_running = True
 
-        self.game_list = [SnakeGame]
+        self.game_list = [SnakeGame, PongGame]
         self.current_game_index = 0
         self.game_instance = None
 
@@ -58,7 +60,13 @@ class GameManager:
         self.last_time = now_time
 
     def game_over(self):
-        self.game_instance = self.initialize_game(self.current_game_index)
+        new_index = self.current_game_index + 1
+
+        if new_index > len(self.game_list) - 1:
+            new_index = 0
+
+        self.game_instance = self.initialize_game(new_index)
+        self.current_game_index = new_index
 
     def check_events(self, events):
         for event in events:  # User did something

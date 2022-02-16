@@ -1,5 +1,4 @@
 import pygame
-import sys
 from game.src.game_manager import GameManager
 
 
