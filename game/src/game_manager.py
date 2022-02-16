@@ -12,7 +12,7 @@ class GameManager:
 
     def __init__(self):
         self.game_handler = GameHandler(self)
-        self.screen = pygame.display.set_mode(settings.SCREEN_SIZE)
+        self.screen = pygame.display.set_mode(settings.SCREEN_SIZE, pygame.FULLSCREEN)
 
         self.fps = settings.FPS
         self.clock = pygame.time.Clock()
