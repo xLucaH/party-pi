@@ -36,7 +36,7 @@ class GameManager:
         pygame.quit()
         sys.exit()
 
-    def initialize_game(self, index) :
+    def initialize_game(self, index):
         game = self.game_list[index]
         return game(self.screen, self.game_handler)
 
@@ -44,7 +44,7 @@ class GameManager:
         # First thing is to check for occurring events.
         now_time = pygame.time.get_ticks()
 
-        self.delta_time = (now_time - self.last_time) / 1000.0
+        self.delta_time = self.clock.tick(self.fps) / 1000
 
         self.game_handler.update(self.delta_time)
 

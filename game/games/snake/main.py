@@ -66,8 +66,6 @@ class SnakeGame(SceneBase):
         self.x1_change = (self.directions[self.current_direction][0] * self.snake_speed) * delta_time
         self.y1_change = (self.directions[self.current_direction][1] * self.snake_speed) * delta_time
 
-        print(self.x1_change, self.y1_change)
-
     def update(self, screen, delta_time, events):
         self.screen.fill(Colors.WHITE)
 
