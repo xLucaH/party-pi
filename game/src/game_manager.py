@@ -1,3 +1,4 @@
+import sys
 import pygame
 from .. import settings
 
@@ -8,7 +9,7 @@ from ..src.game_handler import GameHandler
 class GameManager:
 
     def __init__(self):
-        self.game_handler = GameHandler()
+        self.game_handler = GameHandler(self)
         self.screen = pygame.display.set_mode(settings.SCREEN_SIZE, pygame.FULLSCREEN)
 
         self.fps = settings.FPS
@@ -25,20 +26,23 @@ class GameManager:
     def run(self):
 
         # Initialize first game
-        game = self.game_list[self.current_game_index]
-        self.game_instance = game(self.screen, self.game_handler)
+        self.game_instance = self.initialize_game(self.current_game_index)
 
         while self.game_running:
             self.update()
 
         pygame.quit()
+        sys.exit()
+
+    def initialize_game(self, index) :
+        game = self.game_list[index]
+        return game(self.screen, self.game_handler)
 
     def update(self):
         # First thing is to check for occurring events.
         now_time = pygame.time.get_ticks()
 
-        delta = (now_time - self.last_time) / 1000.0
-        self.delta_time = delta
+        self.delta_time = (now_time - self.last_time) / 1000.0
 
         self.game_handler.update(self.delta_time)
 
@@ -50,8 +54,11 @@ class GameManager:
         # Last things we want to do.
         pygame.display.update()
 
-        self.last_time = now_time
         self.clock.tick(self.fps)
+        self.last_time = now_time
+
+    def game_over(self):
+        self.game_instance = self.initialize_game(self.current_game_index)
 
     def check_events(self, events):
         for event in events:  # User did something

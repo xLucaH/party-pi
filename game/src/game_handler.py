@@ -21,12 +21,13 @@ class GameHandler:
     Provides the event handling for our game games.
     """
 
-    def __init__(self):
+    def __init__(self, manager):
         self._score = 0
         self.events = []
         self.button_pressed = False
         self.button = None
         self.delta_time = 1
+        self.game_manager = manager
 
         self.button_subscriber = []
 
@@ -63,3 +64,6 @@ class GameHandler:
                 return True
 
         return False
+
+    def game_over(self):
+        self.game_manager.game_over()

@@ -80,8 +80,7 @@ class SnakeGame(SceneBase):
 
         # once snake hits wall, end the game
         if self.x1 >= self.screen_x or self.x1 < 0 or self.y1 >= self.screen_y or self.y1 < 0:
-            self.game_close = True
-            self.screen.fill(Colors.BLACK)
+            self.handler.game_over()
 
         # use location to draw small rectangles for food
         food_position = [self.foodx, self.foody, self.snake_block, self.snake_block]
